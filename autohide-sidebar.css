@@ -1,0 +1,212 @@
+/* Show sidebar only when the cursor is over it in fullscreen mode */
+/* Regular resizable sidebar in normal/maximized mode */
+
+:root {
+  --uc-sidebar-width: 260px;
+  --uc-sidebar-hover-width: 300px;
+  --uc-autohide-sidebar-delay: 100ms;
+  --uc-autohide-transition-duration: 115ms;
+  --uc-autohide-transition-type: linear;
+  --uc-sidebar-fullscreen-width: 3px;
+}
+
+#sidebar {
+  border-bottom-right-radius: var(--uc-tweak-rounded-corners-radius) !important;
+  border-bottom-left-radius: var(--uc-tweak-rounded-corners-radius) !important;
+}
+
+#sidebar-title {
+  padding-inline: 0 !important;
+  padding-top: 2px !important;
+  opacity: 40% !important;
+}
+
+#sidebar-switcher-target {
+  padding: 0px 0px 2px 0px !important;
+}
+
+/* Default sidebar behavior */
+#sidebar-box {
+  position: relative;
+  min-width: var(--uc-sidebar-width) !important;
+  max-width: 800px !important;
+  background-color: var(--lwt-accent-color) !important;
+  z-index: 1;
+}
+
+/* Style splitter for better visibility while keeping it thin */
+#sidebar-splitter {
+  width: 1px !important;
+  min-width: 1px !important;
+  background-color: color-mix(in srgb, currentColor 25%, transparent) !important;
+  border: none !important;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+#sidebar-splitter:hover {
+  opacity: 1;
+  width: 2px !important;
+  min-width: 2px !important;
+}
+
+/* Fullscreen specific styles */
+#main-window[sizemode="fullscreen"] #sidebar-box:not([titlepreface*="|| "]) {
+  min-width: var(--uc-sidebar-fullscreen-width) !important;
+  width: var(--uc-sidebar-fullscreen-width) !important;
+  max-width: var(--uc-sidebar-fullscreen-width) !important;
+  opacity: 0.6;
+  background-color: transparent !important;
+  transition: all var(--uc-autohide-transition-duration)
+    var(--uc-autohide-transition-type) var(--uc-autohide-sidebar-delay) !important;
+}
+
+#main-window[sizemode="fullscreen"] #sidebar-box:not([titlepreface*="|| "]):hover {
+  min-width: var(--uc-sidebar-hover-width) !important;
+  width: var(--uc-sidebar-hover-width) !important;
+  max-width: var(--uc-sidebar-hover-width) !important;
+  opacity: 1;
+  background-color: var(--lwt-accent-color) !important;
+}
+
+/* RTL support */
+#sidebar-box[positionend] {
+  direction: rtl;
+}
+#sidebar-box[positionend] > * {
+  direction: ltr;
+}
+
+#sidebar-box[positionend]:-moz-locale-dir(rtl) {
+  direction: ltr;
+}
+#sidebar-box[positionend]:-moz-locale-dir(rtl) > * {
+  direction: rtl;
+}
+
+#sidebar-header {
+  overflow: hidden;
+  color: var(--chrome-color, inherit) !important;
+  padding: 2px 0 2px 0 !important;
+  font-size: 1em !important;
+  font-weight: bold !important;
+  margin-inline-start: calc(
+    var(--uc-tweak-rounded-corners-padding) - 10px
+  ) !important;
+  border-bottom: 0 !important;
+  border-top-right-radius: var(--uc-tweak-rounded-corners-radius) !important;
+}
+
+/* Hide unnecessary elements */
+#sidebar-header #sidebar-switcher-target #sidebar-icon,
+#sidebar-switcher-arrow,
+#sidebar-close.close-icon {
+  visibility: collapse !important;
+}
+
+/* Optional header hiding */
+@media (-moz-bool-pref: "uc.tweak.hide-sidebar-header") {
+  #sidebar-header {
+    visibility: collapse !important;
+  }
+}
+
+#sidebar-header::before,
+#sidebar-header::after {
+  content: "";
+  display: flex;
+  padding-left: 8px;
+}
+
+/* Fullscreen transitions */
+#main-window[sizemode="fullscreen"] #sidebar-header:not([titlepreface*="|| "]),
+#main-window[sizemode="fullscreen"] #sidebar:not([titlepreface*="|| "]) {
+  transition: all var(--uc-autohide-transition-duration)
+    var(--uc-autohide-transition-type) var(--uc-autohide-sidebar-delay) !important;
+  min-width: var(--uc-sidebar-fullscreen-width) !important;
+  will-change: min-width;
+  background-color: var(--lwt-accent-color) !important;
+}
+
+/* Fullscreen hover states */
+#main-window[sizemode="fullscreen"] #sidebar-box:not([titlepreface*="|| "]):hover > #sidebar-header,
+#main-window[sizemode="fullscreen"] #sidebar-box:not([titlepreface*="|| "]):hover > #sidebar {
+  margin-inline-start: calc(
+    var(--uc-tweak-rounded-corners-padding) - 10px
+  ) !important;
+  min-width: var(--uc-sidebar-hover-width) !important;
+  transition-delay: 0ms !important;
+  opacity: 100% !important;
+}
+
+/* Panel styling */
+.sidebar-panel {
+  background-color: var(--lwt-accent-color) !important;
+  color: var(--newtab-text-primary-color) !important;
+}
+
+.sidebar-panel #search-box {
+  -moz-appearance: none !important;
+  background-color: var(--lwt-accent-color) !important;
+  color: inherit !important;
+}
+
+/* Status panel positioning in fullscreen */
+#main-window[sizemode="fullscreen"] #sidebar-box:not([positionend]):hover ~ #appcontent #statuspanel {
+  inset-inline: auto 0px !important;
+}
+
+#main-window[sizemode="fullscreen"] #sidebar-box:not([positionend]):hover ~ #appcontent #statuspanel-label {
+  margin-inline: 0px !important;
+  border-left-style: solid !important;
+}
+
+/* Overlay mode styles - improved collapse behavior */
+#main-window[titlepreface*="|| "] {
+  --ovrl-wdt: var(--ovrl-max-wdt);
+
+  & :is(#sidebar-box) {
+    min-width: 0 !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    opacity: 0;
+    overflow: hidden !important;
+    transition: all 0.2s ease;
+
+    &[positionend] {
+      margin-inline-start: 0 !important;
+      margin-inline-end: 0 !important;
+    }
+
+    &:hover {
+      min-width: var(--uc-sidebar-hover-width) !important;
+      width: var(--uc-sidebar-hover-width) !important;
+      max-width: var(--uc-sidebar-hover-width) !important;
+      opacity: 1;
+    }
+  }
+
+  & #browser > #appcontent {
+    margin-left: 0;
+  }
+
+  & #appcontent browser {
+    margin-left: 0;
+  }
+
+  & #statuspanel {
+    margin-left: 2px;
+  }
+}
+
+/* Longer sidebar preference */
+@media (-moz-bool-pref: "uc.tweak.longer-sidebar") {
+  :root #sidebar-box {
+    --uc-sidebar-hover-width: 260px !important;
+  }
+}
+
+/* Hide tab toolbar */
+#TabsToolbar-customization-target {
+  visibility: collapse !important;
+}

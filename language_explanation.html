@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turing Machine ID Components</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .example {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .component {
+            color: #2c5282;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Understanding ID Components (x,y,u) in Turing Machine</h1>
+
+    <h2>Components Explanation:</h2>
+    <ul>
+        <li><span class="component">x</span>: Represents the content of the tape to the left of the head</li>
+        <li><span class="component">y</span>: Represents the content of the tape to the right of the head</li>
+        <li><span class="component">u</span>: Represents the current state of the machine</li>
+    </ul>
+
+    <div class="example">
+        <h3>Example:</h3>
+        <p>Consider a Turing machine M that adds 1 to a binary number.</p>
+        <p>Let's say we have the binary number 1011 on the tape and the machine is currently processing the rightmost digit.</p>
+        
+        <pre>
+Tape:    1 0 1 1
+               ^
+               (head position)
+        </pre>
+
+        <p>The ID would be: (101, 1, q0) where:</p>
+        <ul>
+            <li><span class="component">x = 101</span>: The content to the left of the head</li>
+            <li><span class="component">y = 1</span>: The content starting from the head position to the right</li>
+            <li><span class="component">u = q0</span>: The current state (assuming q0 is the initial state)</li>
+        </ul>
+
+        <h4>What This ID Tells Us:</h4>
+        <ul>
+            <li>The machine is currently looking at the rightmost '1'</li>
+            <li>Everything to the left of the head (101) is stored in x</li>
+            <li>The current symbol and everything to the right (1) is stored in y</li>
+            <li>The machine is in state q0</li>
+        </ul>
+    </div>
+
+    <h2>Important Points:</h2>
+    <ul>
+        <li>The ID (x,y,u) completely describes an instantaneous configuration of the Turing machine</li>
+        <li>It captures both the contents of the tape and the internal state of the machine</li>
+        <li>The head position is implicitly defined as the boundary between x and y</li>
+        <li>This triplet allows us to track the computation of the Turing machine step by step</li>
+    </ul>
+</body>
+</html>
