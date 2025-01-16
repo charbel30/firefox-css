@@ -1,4 +1,4 @@
-/*! SHIMMMER v2.19 */
+/*! SHIMMMER v2.25 */
 /*? https://github.com/nuclearcodecat/shimmer */
 
 
@@ -88,12 +88,14 @@
 /*? slim scrollbars everywhear!!!! */
 * {
   scrollbar-width: thin !important;
-}/* Sidebar variables */
-/* Sidebar variables */
-/* Sidebar variables */
-/* Sidebar variables */
+}
 
-  
+@media (-moz-bool-pref: "shimmer.hide-sidebar-button") {
+  #sidebar-button {
+    display: none !important;
+  }
+}
+
 /*! === titlebar === */
 
 .toolbarbutton-animatable-box>image {
@@ -180,33 +182,6 @@
     grid-area: 3 / 2 / 4 / 3 !important;
   }
 }
-
-/* Sidebar fullscreen and hover behavior */
-:root[inDOMFullscreen] #sidebar-box:not([hidden]) {
-  min-width: 40px !important;
-  max-width: 40px !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-:root[inDOMFullscreen] #sidebar-box:not([hidden]):hover {
-  min-width: 300px !important;
-  max-width: 300px !important;
-}
-
-:root[inDOMFullscreen] #sidebar {
-  min-width: 0 !important;
-  max-width: none !important;
-}
-
-:root[inDOMFullscreen] #sidebar-box:not([hidden]) ~ #appcontent {
-  margin-left: 40px !important;
-  transition: margin 0.2s ease-in-out !important;
-}
-
-:root[inDOMFullscreen] #sidebar-box:not([hidden]):hover ~ #appcontent {
-  margin-left: 300px !important;
-}
-
 @media (-moz-bool-pref: "shimmer.reverse-winctr-buttons-side") {
   #navigator-toolbox {
     grid-template-columns: auto 1fr !important;
@@ -230,23 +205,27 @@
     grid-area: 3 / 1 / 4 / 2 !important;
   }
 
-  #TabsToolbar {
-    flex-direction: row-reverse !important;
+  @supports (not (-moz-osx-font-smoothing: grayscale)) {
+    #TabsToolbar {
+      flex-direction: row-reverse !important;
+    }
   }
 }
 
-/*TODO possible fix for macos icons not centered (#3) */
-.titlebar-buttonbox-container {
-  justify-content: space-evenly !important;
-  align-items: center !important;
+@supports (-moz-osx-font-smoothing: grayscale) {
+  .titlebar-buttonbox-container {
+    justify-content: space-evenly !important;
+    align-items: center !important;
+  }
+  .titlebar-buttonbox {
+    align-items: center !important;
+  }
+  .titlebar-button {
+    height: 100% !important;
+  }
 }
-.titlebar-buttonbox {
-  height: 100% !important;
-  align-items: center !important;
-}
-.titlebar-button {
-  height: 100% !important;
-}
+
+
 
 /*? make the window grabbable at the top, but not the window control buttons */
 /* #main-window[titlepreface="​"] #nav-bar {
@@ -311,8 +290,10 @@
 /*! === menubar === */
 
 /*? hide regular winctr buttons when menubar is open */
-#toolbar-menubar:not([inactive]) ~ #TabsToolbar .titlebar-buttonbox-container {
-  display: none !important;
+@supports (not (-moz-osx-font-smoothing: grayscale)) {
+  #toolbar-menubar:not([inactive]) ~ #TabsToolbar .titlebar-buttonbox-container {
+    display: none !important;
+  }
 }
 
 #toolbar-menubar:not([inactive]) {
@@ -331,10 +312,16 @@
 
 /*! === navbar === */
 
-/*? rounded url bar and box */
-#urlbar-background {
+/*? rounded urlbar and box */
+:root[chromehidden*="menubar toolbar directories extrachrome"] #urlbar-background { 
+  background: rgba(0, 0, 0, 0) !important;
+  border: 0 !important;
+}
+:root:not([chromehidden*="menubar toolbar directories extrachrome"]) #urlbar-background { 
   background: var(--toolbar-field-background-color) !important;
-  /* background: color-mix(in srgb, var(--toolbar-bgcolor) 90%, rgba(0, 0, 0, 255)) !important; */
+  border: 1px solid var(--toolbar-field-border-color) !important;
+}
+#urlbar-background {
   border-radius: var(--shimmer-urlbar-rounding) !important;
   transition: all 0.1s linear !important;
 }
@@ -351,17 +338,19 @@
 }
 
 /*? make the background of extended urlbar move down and BROKEN drop a blur behing */
-#urlbar[breakout-extend] {
-  position: fixed !important;
-  margin-top: 12vh !important;
-  /* margin-left: 8vw !important; */
-  z-index: 9999 !important;
-  transition: margin-top 0.45s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
-  /* backdrop-filter: blur(8px) !important; */
-  background: rgba(0, 0, 0, 0) !important;
-  /* border-radius: 20px; */
-  left: 10% !important;
-  width: calc(100vw - 20%) !important;
+@media not (-moz-bool-pref: "shimmer.disable-popover-urlbar") {
+  #urlbar[breakout-extend] {
+    position: fixed !important;
+    margin-top: 12vh !important;
+    /* margin-left: 8vw !important; */
+    z-index: 9999 !important;
+    transition: margin-top 0.45s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+    /* backdrop-filter: blur(8px) !important; */
+    background: rgba(0, 0, 0, 0) !important;
+    /* border-radius: 20px; */
+    left: 10% !important;
+    width: calc(100vw - 20%) !important;
+  }  
 }
 
 #urlbar[breakout-extend] #urlbar-background {
@@ -398,11 +387,6 @@
 /*? centered text when urlbar not in use */
 #urlbar:not(:is([breakout-extend])) #urlbar-input {
   text-align: center !important;
-}
-
-/*? center the text further */
-#urlbar-input {
-  margin-right: 40px !important /* width of identity box */;
 }
 
 /*? hide search one offs */
@@ -456,7 +440,7 @@ findbar {
   border: 0 !important;
   /*? relative for margins */
   position: relative !important;
-  border-radius: 16px !important;
+  border-radius: 12px !important;
   bottom: 60px !important;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -469,7 +453,7 @@ findbar {
   border: 0 !important;
   transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
   overflow-x: visible !important;
-  filter: drop-shadow(0px 0px 1px color-mix(in srgb, var(--lwt-text-color) 60%, rgba(0, 0, 0, 0)));
+  box-shadow: 0 0 0px 1px var(--lwt-accent-color) !important;
 }
 
 findbar[hidden]{
@@ -481,9 +465,10 @@ findbar[hidden]{
 
 findbar:not([hidden]) {
   opacity: 1 !important;
-  background: var(--lwt-accent-color) !important;
+  background: var(--toolbar-bgcolor, var(--toolbar-non-lwt-bgcolor)) !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
-
 .findbar-container, .findbar-container > hbox {
   height: 100% !important;
 }
@@ -530,7 +515,7 @@ findbar:not([hidden]) {
 }
 
 .findbar-textbox {
-  border-radius: 11px !important;
+  border-radius: 8px !important;
   font-family: monospace !important;
   padding: 5px 8px !important;
   width: 16em !important;
@@ -542,9 +527,14 @@ findbar:not([hidden]) {
 }
 .findbar-closebutton {
   opacity: 1 !important;
-  background: var(--lwt-accent-color) !important;
+  /* background: var(--lwt-accent-color) !important; */
   /* wasn't square for some reason */
   width: auto !important;
+}
+.findbar-closebutton image {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
 }
 
 /*? move matched amount below main findbar */
@@ -552,12 +542,14 @@ findbar:not([hidden]) {
   position: absolute !important;
   padding: 20px 13px 3px 10px !important;
   top: 14px !important;
-  background: var(--lwt-accent-color) !important;
+  background: var(--toolbar-bgcolor, var(--toolbar-non-lwt-bgcolor)) !important;
   /* border: solid var(--arrowpanel-border-color) 1px !important; */
   left: -12px !important;
   border-bottom-left-radius: 12px !important;
   border-bottom-right-radius: 12px !important;
   z-index: 9 !important;
+  box-shadow: 0 0 0px 1px var(--lwt-accent-color);
+  clip-path: inset(0 -10px -5px -5px);
 }
 .findbar-find-status {
   display: none !important;
@@ -571,10 +563,12 @@ findbar:not([hidden]) {
   content: '';
   width: 16px;
   height: 22px;
-  background: var(--lwt-accent-color);
+  background: var(--toolbar-bgcolor, var(--toolbar-non-lwt-bgcolor)) !important;
   right: -6px;
   top: 12px;
   transform: rotate(45deg);
+  box-shadow: 0 0 0px 1px var(--lwt-accent-color);
+  clip-path: inset(0 -5px 0 0);
 }
 .findbar-textbox { 
   z-index: 10 !important;
@@ -682,8 +676,9 @@ findbar:not([hidden]) {
 }
 
 /*? round statuspanel */
-#statuspanel, #statuspanel-label {
-  border-radius: 10px !important;
+#statuspanel-label {
+  border-radius: 7px !important;
+  box-shadow: 0 0 0px 1px var(--lwt-accent-color);
 }
 
 /*? border and alternative statuspanel padding */
@@ -694,7 +689,7 @@ findbar:not([hidden]) {
 
 /*? color the statuspanel */
 #statuspanel-label {
-  background: var(--lwt-accent-color) !important;
+  background: var(--toolbar-bgcolor, var(--toolbar-non-lwt-bgcolor)) !important;
   color: var(--lwt-text-color) !important;
 }
 
@@ -831,12 +826,12 @@ spacer[part="overflow-end-indicator"], spacer[part="overflow-start-indicator"] {
 }
 
 @media (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-  :root:not([inDOMFullscreen]) #tabbrowser-tabbox, :root:not([inDOMFullscreen]) #sidebar-main {
+  :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #tabbrowser-tabbox, :root:not([inDOMFullscreen]) #sidebar-main {
     margin-bottom: var(--shimmer-top-bottom-browser-margin) !important;
   }
 }
 @media not (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-  :root:not([inDOMFullscreen]) #sidebar-box:not([hidden]), :root:not([inDOMFullscreen]) #sidebar-box:not([hidden]) ~ #tabbrowser-tabbox {
+  :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-box:not([hidden]), :root:not([inDOMFullscreen]) #sidebar-box:not([hidden]) ~ #tabbrowser-tabbox {
     margin-bottom: var(--shimmer-top-bottom-browser-margin) !important;
   }
 }
@@ -885,14 +880,14 @@ spacer[part="overflow-end-indicator"], spacer[part="overflow-start-indicator"] {
 
 /*? rounded browser on left edge */
 @media not (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-  :root:not([inDOMFullscreen]) #sidebar-box:not([hidden]) ~ #tabbrowser-tabbox {
+  :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-box:not([hidden]) ~ #tabbrowser-tabbox {
     border-radius: 0;
     clip-path: inset(0% 0% 0% 0% round var(--shimmer-browser-border-radius) 0 0 var(--shimmer-browser-border-radius));
     overflow: hidden !important;
   }
 }
 @media (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-  :root:not([inDOMFullscreen]) #tabbrowser-tabbox {
+  :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #tabbrowser-tabbox {
     border-radius: 0;
     clip-path: inset(0% 0% 0% 0% round var(--shimmer-browser-border-radius) 0 0 var(--shimmer-browser-border-radius));
     overflow: hidden !important;
@@ -900,12 +895,12 @@ spacer[part="overflow-end-indicator"], spacer[part="overflow-start-indicator"] {
 }
 
 /*? rounded sidebar on right edge */
-:root:not([inDOMFullscreen]) #sidebar-box {
+:root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-box {
   clip-path: inset(0% 0% 0% 0% round 0 var(--shimmer-browser-border-radius) var(--shimmer-browser-border-radius) 0);
   overflow: hidden !important;
 }
 @media (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-  :root:not([inDOMFullscreen]) #sidebar-main {
+  :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-main {
     clip-path: inset(0% 0% 0% 0% round 0 var(--shimmer-browser-border-radius) var(--shimmer-browser-border-radius) 0);
   }
 }
@@ -913,25 +908,25 @@ spacer[part="overflow-end-indicator"], spacer[part="overflow-start-indicator"] {
 @media (-moz-bool-pref: "shimmer.sidebar-right-side") {
   /*? rounded browser on right edge */
   @media not (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-    :root:not([inDOMFullscreen]) #sidebar-box:not([hidden]) ~ #tabbrowser-tabbox {
+    :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-box:not([hidden]) ~ #tabbrowser-tabbox {
       border-radius: 0 !important;
       clip-path: inset(0% 0% 0% 0% round 0 var(--shimmer-browser-border-radius) var(--shimmer-browser-border-radius) 0);
     }
   }
   @media (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-    :root:not([inDOMFullscreen]) #tabbrowser-tabbox {
+    :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #tabbrowser-tabbox {
       border-radius: 0 !important;
       clip-path: inset(0% 0% 0% 0% round 0 var(--shimmer-browser-border-radius) var(--shimmer-browser-border-radius) 0);
     }
   }
 
   /*? rounded sidebar on left edge */
-  :root:not([inDOMFullscreen]) #sidebar-box {
+  :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-box {
     border-radius: 0 !important;
     clip-path: inset(0% 0% 0% 0% round var(--shimmer-browser-border-radius) 0 0 var(--shimmer-browser-border-radius));
   }
   @media (-moz-bool-pref: "shimmer.native-vertical-tabs") {
-    :root:not([inDOMFullscreen]) #sidebar-main {
+    :root:not([chromehidden*="menubar toolbar directories extrachrome"]):not([inDOMFullscreen]) #sidebar-main {
       clip-path: inset(0% 0% 0% 0% round var(--shimmer-browser-border-radius) 0 0 var(--shimmer-browser-border-radius));
     }
   }
@@ -1030,6 +1025,16 @@ treecol {
   transition: var(--shimmer-btn-anim) !important;
 }
 
+/*? fix for unreadable dropdown text (#34) */
+#ContentSelectDropdown * {
+  color: var(--lwt-text-color) !important;
+}
+
+/*? fix for unreadable disabled dropdown text (#35) */
+#ContentSelectDropdownPopup menuitem[disabled] {
+  background: color-mix(in srgb, var(--lwt-accent-color) 60%, var(--lwt-text-color)) !important;
+}
+
 /*! === autoscroller === */
 
 /* why no work */
@@ -1112,6 +1117,20 @@ treecol {
   /* .titlebar-buttonbox-container {
     margin: 0 var(--shimmer-winctr-margin) 0 0 !important;
   } */
+}
+
+/*! === notif === */
+#navigator-toolbox, #tab-notification-deck {
+  z-index: 10 !important;
+}
+
+#tab-notification-deck > notification-message {
+  position: fixed !important;
+  z-index: 10 !important;
+  top: 9rem !important;
+  right: 0 !important;
+  margin-right: 2rem !important;
+  box-shadow: 0px 1px 3px 2px rgba(0,0,0,.15) !important;
 }
 
 
